@@ -1,0 +1,355 @@
+Microsoft Windows [Version 10.0.26200.9457]
+(c) Microsoft Corporation. All rights reserved.
+
+C:\Users\killa>snowsql -v
+Version: 1.5.1
+
+C:\Users\killa>snowsql -a FQEGSQW-MD78870 -u VEDA1234
+Password:
+* SnowSQL * v1.5.1
+Type SQL statements or !help
+VEDA1234#COMPUTE_WH@(no database).(no schema)>SELECT
+                                                  CURRENT_USER() AS CURRENT_USER,
+                                                  CURRENT_ROLE() AS CURRENT_ROLE,
+                                                  CURRENT_WAREHOUSE() AS CURRENT_WAREHOUSE,
+                                                  CURRENT_DATABASE() AS CURRENT_DATABASE,
+                                                  CURRENT_SCHEMA() AS CURRENT_SCHEMA;
++--------------+--------------+-------------------+------------------+----------------+
+| CURRENT_USER | CURRENT_ROLE | CURRENT_WAREHOUSE | CURRENT_DATABASE | CURRENT_SCHEMA |
+|--------------+--------------+-------------------+------------------+----------------|
+| VEDA1234     | ACCOUNTADMIN | COMPUTE_WH        | NULL             | NULL           |
++--------------+--------------+-------------------+------------------+----------------+
+1 Row(s) produced. Time Elapsed: 0.180s
+VEDA1234#COMPUTE_WH@(no database).(no schema)>CREATE OR REPLACE WAREHOUSE assignment_wh
+                                              WITH
+                                                  WAREHOUSE_SIZE = 'X-SMALL'
+                                                  AUTO_SUSPEND = 60
+                                                  AUTO_RESUME = TRUE;
++-----------------------------------------------+
+| status                                        |
+|-----------------------------------------------|
+| Warehouse ASSIGNMENT_WH successfully created. |
++-----------------------------------------------+
+1 Row(s) produced. Time Elapsed: 0.199s
+VEDA1234#ASSIGNMENT_WH@(no database).(no schema)>USE WAREHOUSE assignment_wh;
++----------------------------------+
+| status                           |
+|----------------------------------|
+| Statement executed successfully. |
++----------------------------------+
+1 Row(s) produced. Time Elapsed: 0.292s
+VEDA1234#ASSIGNMENT_WH@(no database).(no schema)>CREATE OR REPLACE DATABASE assignment_db;
++----------------------------------------------+
+| status                                       |
+|----------------------------------------------|
+| Database ASSIGNMENT_DB successfully created. |
++----------------------------------------------+
+1 Row(s) produced. Time Elapsed: 0.161s
+VEDA1234#ASSIGNMENT_WH@(no database).(no schema)>USE DATABASE assignment_db;
++----------------------------------+
+| status                           |
+|----------------------------------|
+| Statement executed successfully. |
++----------------------------------+
+1 Row(s) produced. Time Elapsed: 0.177s
+VEDA1234#ASSIGNMENT_WH@ASSIGNMENT_DB.PUBLIC>CREATE OR REPLACE SCHEMA assignment_schema;
++------------------------------------------------+
+| status                                         |
+|------------------------------------------------|
+| Schema ASSIGNMENT_SCHEMA successfully created. |
++------------------------------------------------+
+1 Row(s) produced. Time Elapsed: 0.259s
+VEDA1234#ASSIGNMENT_WH@ASSIGNMENT_DB.ASSIGNMENT_SCHEMA>USE SCHEMA assignment_schema;
++----------------------------------+
+| status                           |
+|----------------------------------|
+| Statement executed successfully. |
++----------------------------------+
+1 Row(s) produced. Time Elapsed: 0.082s
+VEDA1234#ASSIGNMENT_WH@ASSIGNMENT_DB.ASSIGNMENT_SCHEMA>CREATE OR REPLACE TABLE students (
+                                                           student_id INTEGER,
+                                                           student_name VARCHAR(100),
+                                                           course VARCHAR(100),
+                                                           grade VARCHAR(2),
+                                                           enrollment_date DATE
+                                                       );
++--------------------------------------+
+| status                               |
+|--------------------------------------|
+| Table STUDENTS successfully created. |
++--------------------------------------+
+1 Row(s) produced. Time Elapsed: 0.265s
+VEDA1234#ASSIGNMENT_WH@ASSIGNMENT_DB.ASSIGNMENT_SCHEMA>CREATE OR REPLACE STAGE assignment_stage;
++---------------------------------------------------+
+| status                                            |
+|---------------------------------------------------|
+| Stage area ASSIGNMENT_STAGE successfully created. |
++---------------------------------------------------+
+1 Row(s) produced. Time Elapsed: 0.238s
+VEDA1234#ASSIGNMENT_WH@ASSIGNMENT_DB.ASSIGNMENT_SCHEMA>INSERT INTO students
+                                                       VALUES
+                                                       (1, 'John Doe', 'Data Warehousing', 'A', '2026-08-01'),
+                                                       (2, 'Jane Smith', 'Data Mining', 'B+', '2026-08-02'),
+                                                       (3, 'Bob Johnson', 'Data Warehousing', 'A-', '2026-08-03'),
+                                                       (4, 'Alice Brown', 'Data Mining', 'B', '2026-08-04');
++-------------------------+
+| number of rows inserted |
+|-------------------------|
+|                       4 |
++-------------------------+
+4 Row(s) produced. Time Elapsed: 1.501s
+VEDA1234#ASSIGNMENT_WH@ASSIGNMENT_DB.ASSIGNMENT_SCHEMA>SELECT * FROM students;
++------------+--------------+------------------+-------+-----------------+
+| STUDENT_ID | STUDENT_NAME | COURSE           | GRADE | ENROLLMENT_DATE |
+|------------+--------------+------------------+-------+-----------------|
+|          1 | John Doe     | Data Warehousing | A     | 2026-08-01      |
+|          2 | Jane Smith   | Data Mining      | B+    | 2026-08-02      |
+|          3 | Bob Johnson  | Data Warehousing | A-    | 2026-08-03      |
+|          4 | Alice Brown  | Data Mining      | B     | 2026-08-04      |
++------------+--------------+------------------+-------+-----------------+
+4 Row(s) produced. Time Elapsed: 0.327s
+VEDA1234#ASSIGNMENT_WH@ASSIGNMENT_DB.ASSIGNMENT_SCHEMA>UPDATE students
+                                                       SET grade = 'A+'
+                                                       WHERE student_id = 2;
++------------------------+-------------------------------------+
+| number of rows updated | number of multi-joined rows updated |
+|------------------------+-------------------------------------|
+|                      1 |                                   0 |
++------------------------+-------------------------------------+
+1 Row(s) produced. Time Elapsed: 0.355s
+VEDA1234#ASSIGNMENT_WH@ASSIGNMENT_DB.ASSIGNMENT_SCHEMA>SELECT * FROM students;
++------------+--------------+------------------+-------+-----------------+
+| STUDENT_ID | STUDENT_NAME | COURSE           | GRADE | ENROLLMENT_DATE |
+|------------+--------------+------------------+-------+-----------------|
+|          1 | John Doe     | Data Warehousing | A     | 2026-08-01      |
+|          2 | Jane Smith   | Data Mining      | A+    | 2026-08-02      |
+|          3 | Bob Johnson  | Data Warehousing | A-    | 2026-08-03      |
+|          4 | Alice Brown  | Data Mining      | B     | 2026-08-04      |
++------------+--------------+------------------+-------+-----------------+
+4 Row(s) produced. Time Elapsed: 1.399s
+VEDA1234#ASSIGNMENT_WH@ASSIGNMENT_DB.ASSIGNMENT_SCHEMA>INSERT INTO students
+                                                       VALUES
+                                                       (5, 'Charlie Wilson', 'Data Warehousing', 'B+', '2026-08-05');
++-------------------------+
+| number of rows inserted |
+|-------------------------|
+|                       1 |
++-------------------------+
+1 Row(s) produced. Time Elapsed: 0.940s
+VEDA1234#ASSIGNMENT_WH@ASSIGNMENT_DB.ASSIGNMENT_SCHEMA>SELECT * FROM students;
++------------+----------------+------------------+-------+-----------------+
+| STUDENT_ID | STUDENT_NAME   | COURSE           | GRADE | ENROLLMENT_DATE |
+|------------+----------------+------------------+-------+-----------------|
+|          1 | John Doe       | Data Warehousing | A     | 2026-08-01      |
+|          2 | Jane Smith     | Data Mining      | A+    | 2026-08-02      |
+|          3 | Bob Johnson    | Data Warehousing | A-    | 2026-08-03      |
+|          4 | Alice Brown    | Data Mining      | B     | 2026-08-04      |
+|          5 | Charlie Wilson | Data Warehousing | B+    | 2026-08-05      |
++------------+----------------+------------------+-------+-----------------+
+5 Row(s) produced. Time Elapsed: 0.225s
+VEDA1234#ASSIGNMENT_WH@ASSIGNMENT_DB.ASSIGNMENT_SCHEMA>DELETE FROM students
+                                                       WHERE student_id = 4;
++------------------------+
+| number of rows deleted |
+|------------------------|
+|                      1 |
++------------------------+
+1 Row(s) produced. Time Elapsed: 0.647s
+VEDA1234#ASSIGNMENT_WH@ASSIGNMENT_DB.ASSIGNMENT_SCHEMA>SELECT * FROM students
+                                                       ORDER BY student_id;
++------------+----------------+------------------+-------+-----------------+
+| STUDENT_ID | STUDENT_NAME   | COURSE           | GRADE | ENROLLMENT_DATE |
+|------------+----------------+------------------+-------+-----------------|
+|          1 | John Doe       | Data Warehousing | A     | 2026-08-01      |
+|          2 | Jane Smith     | Data Mining      | A+    | 2026-08-02      |
+|          3 | Bob Johnson    | Data Warehousing | A-    | 2026-08-03      |
+|          5 | Charlie Wilson | Data Warehousing | B+    | 2026-08-05      |
++------------+----------------+------------------+-------+-----------------+
+4 Row(s) produced. Time Elapsed: 0.243s
+VEDA1234#ASSIGNMENT_WH@ASSIGNMENT_DB.ASSIGNMENT_SCHEMA>CREATE OR REPLACE TABLE courses (
+                                                           course_id INTEGER,
+                                                           course_name VARCHAR(100),
+                                                           score INTEGER,
+                                                           exam_date DATE
+                                                       );
++-------------------------------------+
+| status                              |
+|-------------------------------------|
+VEDA1234#ASSIGNMENT_WH@ASSIGNMENT_DB.ASSIGNMENT_SCHEMA>CREATE OR REPLACE STAGE courses_stage;
++------------------------------------------------+
+| status                                         |
+|------------------------------------------------|
+| Stage area COURSES_STAGE successfully created. |
++------------------------------------------------+
+1 Row(s) produced. Time Elapsed: 0.298s
+VEDA1234#ASSIGNMENT_WH@ASSIGNMENT_DB.ASSIGNMENT_SCHEMA>PUT 'file://C:\Users\killa\Downloads\courses.csv'
+                                                           @courses_stage
+                                                           AUTO_COMPRESS = TRUE;
+253006 (n/a): File doesn't exist: ['C:UserskillaDownloadscourses.csv']
+VEDA1234#ASSIGNMENT_WH@ASSIGNMENT_DB.ASSIGNMENT_SCHEMA>'file://C:\Users\killa\Downloads\courses.csv'
+                                                                                                                  @courses_stage
+                                                                                                                  AUTO_COMPRESS = TRUE;
+001003 (42000): SQL compilation error:
+syntax error line 1 at position 0 unexpected ''file://C:\Users\killa\Downloads\courses.csv''.
+VEDA1234#ASSIGNMENT_WH@ASSIGNMENT_DB.ASSIGNMENT_SCHEMA>PUT 'file://C:/Users/killa/Downloads/courses.csv'
+                                                           @courses_stage
+                                                           AUTO_COMPRESS = TRUE;
++-------------+----------------+-------------+-------------+--------------------+--------------------+----------+---------+
+| source      | target         | source_size | target_size | source_compression | target_compression | status   | message |
+|-------------+----------------+-------------+-------------+--------------------+--------------------+----------+---------|
+| courses.csv | courses.csv.gz |         178 |         176 | NONE               | GZIP               | UPLOADED |         |
++-------------+----------------+-------------+-------------+--------------------+--------------------+----------+---------+
+1 Row(s) produced. Time Elapsed: 2.451s
+VEDA1234#ASSIGNMENT_WH@ASSIGNMENT_DB.ASSIGNMENT_SCHEMA>LIST @courses_stage;
++------------------------------+------+----------------------------------+-------------------------------+
+| name                         | size | md5                              | last_modified                 |
+|------------------------------+------+----------------------------------+-------------------------------|
+| courses_stage/courses.csv.gz |  176 | c87faa7c073c7b8687ea9356d9064d95 | Tue, 15 Sep 2026 14:24:49 GMT |
++------------------------------+------+----------------------------------+-------------------------------+
+1 Row(s) produced. Time Elapsed: 0.161s
+VEDA1234#ASSIGNMENT_WH@ASSIGNMENT_DB.ASSIGNMENT_SCHEMA>COPY INTO courses
+                                                       FROM @courses_stage
+                                                       FILE_FORMAT = (
+                                                           TYPE = CSV
+                                                           SKIP_HEADER = 1
+                                                           FIELD_OPTIONALLY_ENCLOSED_BY = '"'
+                                                       );
++------------------------------+--------+-------------+-------------+-------------+-------------+-------------+------------------+-----------------------+-------------------------+
+| file                         | status | rows_parsed | rows_loaded | error_limit | errors_seen | first_error | first_error_line | first_error_character | first_error_column_name |
+|------------------------------+--------+-------------+-------------+-------------+-------------+-------------+------------------+-----------------------+-------------------------|
+| courses_stage/courses.csv.gz | LOADED |           4 |           4 |           1 |           0 | NULL        |             NULL |                  NULL | NULL                    |
++------------------------------+--------+-------------+-------------+-------------+-------------+-------------+------------------+-----------------------+-------------------------+
+1 Row(s) produced. Time Elapsed: 1.116s
+VEDA1234#ASSIGNMENT_WH@ASSIGNMENT_DB.ASSIGNMENT_SCHEMA>SELECT * FROM courses ORDER BY course_id;
++-----------+--------------------+-------+------------+
+| COURSE_ID | COURSE_NAME        | SCORE | EXAM_DATE  |
+|-----------+--------------------+-------+------------|
+|       101 | Data Warehousing   |    85 | 2026-08-10 |
+|       102 | Data Mining        |    90 | 2026-08-11 |
+|       103 | Machine Learning   |    78 | 2026-08-12 |
+|       104 | Big Data Analytics |    88 | 2026-08-13 |
++-----------+--------------------+-------+------------+
+4 Row(s) produced. Time Elapsed: 0.229s
+VEDA1234#ASSIGNMENT_WH@ASSIGNMENT_DB.ASSIGNMENT_SCHEMA>CREATE OR REPLACE TABLE employees (
+                                                           emp_id INTEGER,
+                                                           emp_name VARCHAR(100),
+                                                           department VARCHAR(100),
+                                                           salary INTEGER
+                                                       );
++---------------------------------------+
+| status                                |
+|---------------------------------------|
+| Table EMPLOYEES successfully created. |
++---------------------------------------+
+1 Row(s) produced. Time Elapsed: 0.344s
+VEDA1234#ASSIGNMENT_WH@ASSIGNMENT_DB.ASSIGNMENT_SCHEMA>INSERT INTO employees
+                                                       VALUES
+                                                       (1, 'Mike Ross', 'Legal', 75000),
+                                                       (2, 'Rachel Zane', 'Legal', 70000),
+                                                       (3, 'Harvey Specter', 'Legal', 120000),
+                                                       (4, 'Louis Litt', 'Legal', 90000);
++-------------------------+
+| number of rows inserted |
+|-------------------------|
+|                       4 |
++-------------------------+
+4 Row(s) produced. Time Elapsed: 0.387s
+VEDA1234#ASSIGNMENT_WH@ASSIGNMENT_DB.ASSIGNMENT_SCHEMA>SELECT * FROM employees ORDER BY emp_id;
++--------+----------------+------------+--------+
+| EMP_ID | EMP_NAME       | DEPARTMENT | SALARY |
+|--------+----------------+------------+--------|
+|      1 | Mike Ross      | Legal      |  75000 |
+|      2 | Rachel Zane    | Legal      |  70000 |
+|      3 | Harvey Specter | Legal      | 120000 |
+|      4 | Louis Litt     | Legal      |  90000 |
++--------+----------------+------------+--------+
+4 Row(s) produced. Time Elapsed: 1.149s
+VEDA1234#ASSIGNMENT_WH@ASSIGNMENT_DB.ASSIGNMENT_SCHEMA>UPDATE employees
+                                                       SET salary = 80000
+                                                       WHERE emp_id = 2;
++------------------------+-------------------------------------+
+| number of rows updated | number of multi-joined rows updated |
+|------------------------+-------------------------------------|
+|                      1 |                                   0 |
++------------------------+-------------------------------------+
+1 Row(s) produced. Time Elapsed: 0.406s
+VEDA1234#ASSIGNMENT_WH@ASSIGNMENT_DB.ASSIGNMENT_SCHEMA>SELECT * FROM employees ORDER BY emp_id;
++--------+----------------+------------+--------+
+| EMP_ID | EMP_NAME       | DEPARTMENT | SALARY |
+|--------+----------------+------------+--------|
+|      1 | Mike Ross      | Legal      |  75000 |
+|      2 | Rachel Zane    | Legal      |  80000 |
+|      3 | Harvey Specter | Legal      | 120000 |
+|      4 | Louis Litt     | Legal      |  90000 |
++--------+----------------+------------+--------+
+4 Row(s) produced. Time Elapsed: 0.153s
+VEDA1234#ASSIGNMENT_WH@ASSIGNMENT_DB.ASSIGNMENT_SCHEMA>DELETE FROM employees
+                                                       WHERE emp_id = 4;
++------------------------+
+| number of rows deleted |
+|------------------------|
+|                      1 |
++------------------------+
+1 Row(s) produced. Time Elapsed: 0.309s
+VEDA1234#ASSIGNMENT_WH@ASSIGNMENT_DB.ASSIGNMENT_SCHEMA>SELECT LAST_QUERY_ID();
++--------------------------------------+
+| LAST_QUERY_ID()                      |
+|--------------------------------------|
+| 01c716c3-0002-1484-0000-000fb032b1f5 |
++--------------------------------------+
+1 Row(s) produced. Time Elapsed: 0.402s
+VEDA1234#ASSIGNMENT_WH@ASSIGNMENT_DB.ASSIGNMENT_SCHEMA>SELECT *
+                                                       FROM employees
+                                                       BEFORE (STATEMENT => 'YOUR_DELETE_QUERY_ID')
+                                                       ORDER BY emp_id;
+000709 (02000): Statement YOUR_DELETE_QUERY_ID not found
+VEDA1234#ASSIGNMENT_WH@ASSIGNMENT_DB.ASSIGNMENT_SCHEMA>SELECT *
+                                                       FROM employees
+                                                       BEFORE (STATEMENT => '01c716c3-0002-1484-0000-000fb032b1f5')
+                                                       ORDER BY emp_id;
++--------+----------------+------------+--------+
+| EMP_ID | EMP_NAME       | DEPARTMENT | SALARY |
+|--------+----------------+------------+--------|
+|      1 | Mike Ross      | Legal      |  75000 |
+|      2 | Rachel Zane    | Legal      |  80000 |
+|      3 | Harvey Specter | Legal      | 120000 |
+|      4 | Louis Litt     | Legal      |  90000 |
++--------+----------------+------------+--------+
+4 Row(s) produced. Time Elapsed: 0.569s
+VEDA1234#ASSIGNMENT_WH@ASSIGNMENT_DB.ASSIGNMENT_SCHEMA>SELECT *
+                                                       FROM employees
+                                                       BEFORE (STATEMENT => '01c716c3-0002-1484-0000-000fb032b1f5')
+                                                       MINUS
+                                                       SELECT *
+                                                       FROM employees;
++--------+------------+------------+--------+
+| EMP_ID | EMP_NAME   | DEPARTMENT | SALARY |
+|--------+------------+------------+--------|
+|      4 | Louis Litt | Legal      |  90000 |
++--------+------------+------------+--------+
+1 Row(s) produced. Time Elapsed: 0.440s
+VEDA1234#ASSIGNMENT_WH@ASSIGNMENT_DB.ASSIGNMENT_SCHEMA>INSERT INTO employees
+                                                       SELECT *
+                                                       FROM employees
+                                                       BEFORE (STATEMENT => '01c716c3-0002-1484-0000-000fb032b1f5')
+                                                       MINUS
+                                                       SELECT *
+                                                       FROM employees;
++-------------------------+
+| number of rows inserted |
+|-------------------------|
+|                       1 |
++-------------------------+
+1 Row(s) produced. Time Elapsed: 0.486s
+VEDA1234#ASSIGNMENT_WH@ASSIGNMENT_DB.ASSIGNMENT_SCHEMA>SELECT * FROM employees
+                                                       ORDER BY emp_id;
++--------+----------------+------------+--------+
+| EMP_ID | EMP_NAME       | DEPARTMENT | SALARY |
+|--------+----------------+------------+--------|
+|      1 | Mike Ross      | Legal      |  75000 |
+|      2 | Rachel Zane    | Legal      |  80000 |
+|      3 | Harvey Specter | Legal      | 120000 |
+|      4 | Louis Litt     | Legal      |  90000 |
++--------+----------------+------------+--------+
+4 Row(s) produced. Time Elapsed: 0.259s
+VEDA1234#ASSIGNMENT_WH@ASSIGNMENT_DB.ASSIGNMENT_SCHEMA>
